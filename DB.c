@@ -4,3 +4,8 @@
 #include "DB.h"
 
 Database *DB = NULL;
+
+
+void import_grades(char *filename) {
+  return;
+}

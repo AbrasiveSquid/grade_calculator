@@ -1,23 +1,23 @@
 #include <stdio.h>
-// #include <stdlib.h>
+#include <stdlib.h>
+#include <string.h>
 #include "dashboard.h"
 #include "DB.h"
 
 int main(void) {
   int option;
+  int ch;
 
   
   while (1) {
-    printf("Select an option:\n1. Import Grades\n2. Save Grades\n3. List Courses\n4. Edit Course\n5. Remove Course\n6. Exit\n>  ");
+    printf("\nSelect an option:\n1. Import Grades\n2. Save Grades\n3. List Courses\n4. Edit Course\n5. Remove Course\n6. Exit\n>  ");
 
-    if (scanf("%d", &option) != 1) {
+    if (scanf("%d", &option) != 1 || option < 1 || option > 6) {
       fprintf(stderr, "Incorrect option selected: ");
-      continue;
+
+      option = -1;
     }
-    if (option < 1 || option > 6){
-      fprintf(stderr, "Incorrect option selected: ");
-      continue;
-    }
+    while ((ch = getchar()) != '\n' && ch != EOF); // clears input buffer
 
     switch (option) {
       case 1:
@@ -38,7 +38,7 @@ int main(void) {
       case 6:
         return 0;
       default:
-        fprintf(stderr, "Incorrect option selected:");
+        fprintf(stderr, "Incorrect option selected\n");
         continue;
     }
     
@@ -48,7 +48,30 @@ int main(void) {
 
 
 void import_grades_input(void) {
-  return;
+  FILE *fp;
+  char filename[100];
+  printf("\nEnter a filename that was previously used to save grades: ");
+  get_user_input(filename, 100);
+
+  while ((fp = fopen(filename, "r")) == NULL) {
+    printf("'%s' is an incorrect filename, try entering the filename again or 'q' to quit\n> ", filename);
+    get_user_input(filename, 100);
+    if (strcmp(filename, "q") == 0) 
+      exit(EXIT_SUCCESS);
+
+
+  }
+  fclose(fp);
+  import_grades(filename);
+}
+
+void get_user_input(char input_buffer[], int size) {
+  int ch, i = 0;
+
+  while ((ch = getchar()) != '\n' && ch != EOF && i < size-1 )
+    input_buffer[i++] = ch;
+
+  input_buffer[i] = '\0';
 }
 
 
