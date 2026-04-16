@@ -3,6 +3,7 @@ CFLAGS = -std=c99 -Wall -g
 HEADERS = DB.h dashboard.h db_helper.h
 OBJECTS = DB.o dashboard.o db_helper.o
 TARGET = dashboard
+TESTS = test_db_helper
 
 
 all: $(TARGET)
@@ -21,7 +22,21 @@ dashboard.o: dashboard.c dashboard.h db_helper.h
 
 
 
-.PHONY:
+# tests
+test_db_helper: test_db_helper.o db_helper.o
+	$(CC) $(CFLAGS) $^ -o $@
+
+test_db_helper.o: testing/test_db_helper.c db_helper.h
+	$(CC) $(CFLAGS) $< -c
+
+.PHONY: all clean tests run_test_db_helper
+
+
+tests: run_test_db_helper
+
+run_test_db_helper: test_db_helper
+	./test_db_helper
+
 
 clean:
-	rm -r $(TARGETS) *.o
+	rm -r $(TARGETS) $(TESTS) *.o

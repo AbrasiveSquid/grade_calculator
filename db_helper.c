@@ -11,3 +11,26 @@ char *allocate_string(int len) {
   }
   return str;
 }
+
+int validate_integer(int min, int max) {
+  int num;
+  char term;
+  while (1) {
+    printf("Enter an integer between %d - %d\n", min, max);
+
+    if(scanf("%d%c", &num, &term) != 2  && is_valid_input(num, term, min, max))
+      return num;
+    else 
+      printf("Invalid input, enter an int followed by enter/return key\n");
+  }
+}
+
+bool is_valid_input(int num, char term, int min, int max) {
+  if (term != '\n')
+    return false;
+  if (num < min || num > max)
+    return false;
+  return true;
+
+
+}

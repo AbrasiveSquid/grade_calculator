@@ -9,17 +9,34 @@ Holds the Database, and functions to interact with the database
 
 typedef struct {
   float grade;
+  int total_entries;
+  int curr_entries;
   char *description;
+
 }Assessment; 
 
 typedef struct {
   // name
-  // grade breakdown
-  // assignments
-  // 
-
   char *course_name;
-
+  Assessment *assessment_list;
+  
+  float current_grade;
+  // grade breakdown
+  struct {
+    int a_plus;
+    int a;
+    int a_min;
+    int b_plus;
+    int b;
+    int b_min;
+    int c_plus;
+    int c;
+    int c_min;
+    int d_plus;
+    int d;
+    int d_min;
+    int f;
+  }grade_scale;
 }Course;
 
 typedef struct {
@@ -56,6 +73,8 @@ void add_grade(char *course_name, char *assessment_desc, float grade);
 
 /* Calculates the percentage needed to get a mark on the final*/
 float grade_needed_on_final(char *course_name);
+
+void enter_grade_scale(char *course_name);
 
 
 #endif
