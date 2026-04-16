@@ -3,6 +3,10 @@
 #define DB_HELPER__H
 #include "DB.h"
 #include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
 
 
 
@@ -17,11 +21,14 @@ Returns:
 */
 char *allocate_string(int len);
 
-/* validate integer was entered by the user*/
-int validate_integer(int min, int max);
+/* gets a valid integer from the user*/
+int get_valid_integer(int min, int max);
 
 /* validates that input from user was entered correctly*/
 bool is_valid_input(int num, char term, int min, int max);
+
+/* compares two strings to check if they are same value, not case sensitive */
+bool strcmp_case_insensitive(const char *str1, const char *str2);
 
 
 #endif

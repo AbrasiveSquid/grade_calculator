@@ -4,6 +4,8 @@ Holds the Database, and functions to interact with the database
 
 #ifndef DB_H
 #define DB_H
+#include <stdio.h>
+#include <string.h>
 
 #define INIT_SIZE 10
 
@@ -35,7 +37,6 @@ typedef struct {
     int d_plus;
     int d;
     int d_min;
-    int f;
   }grade_scale;
 }Course;
 
@@ -47,11 +48,7 @@ typedef struct {
 
 }Database;
 
-
-
 extern Database *DB;
-
-
 
 /* Import grades from a textfile into the database*/
 void import_grades(char *filename);
@@ -74,7 +71,15 @@ void add_grade(char *course_name, char *assessment_desc, float grade);
 /* Calculates the percentage needed to get a mark on the final*/
 float grade_needed_on_final(char *course_name);
 
+/* adds the cut off for each letter grade into the course object*/
 void enter_grade_scale(char *course_name);
+
+/* returns the course from the database
+
+Returns: 
+  NULL if course doesn't exist
+*/
+Course *get_course(char *course_name);
 
 
 #endif

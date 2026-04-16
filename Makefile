@@ -23,6 +23,7 @@ dashboard.o: dashboard.c dashboard.h db_helper.h
 
 
 # tests
+
 test_db_helper: test_db_helper.o db_helper.o
 	$(CC) $(CFLAGS) $^ -o $@
 
@@ -39,4 +40,4 @@ run_test_db_helper: test_db_helper
 
 
 clean:
-	rm -r $(TARGETS) $(TESTS) *.o
+	rm -rf $(TARGETS) $(TESTS) *.o

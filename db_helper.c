@@ -1,5 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
+
 #include "db_helper.h"
 
 
@@ -12,7 +11,7 @@ char *allocate_string(int len) {
   return str;
 }
 
-int validate_integer(int min, int max) {
+int get_valid_integer(int min, int max) {
   int num;
   char term;
   while (1) {
@@ -31,6 +30,19 @@ bool is_valid_input(int num, char term, int min, int max) {
   if (num < min || num > max)
     return false;
   return true;
-
-
 }
+
+
+bool strcmp_case_insensitive(const char *str1, const char *str2) { 
+  int comp;
+  while (*str1 != '\0' || *str2 != '\0')
+    {
+      comp = tolower((unsigned char) *str1) - tolower((unsigned char) *str2);
+      str1++,str2++;
+      if (comp != 0)
+        return false;
+    }
+
+  return true;
+}
+
