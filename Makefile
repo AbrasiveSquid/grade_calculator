@@ -40,4 +40,4 @@ run_test_db_helper: test_db_helper
 
 
 clean:
-	rm -rf $(TARGETS) $(TESTS) *.o
+	rm -rf $(TARGET) $(TESTS) *.o
