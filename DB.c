@@ -1,7 +1,7 @@
 /* Functions for database*/
 
-#include <stdlib.h>
 #include "DB.h"
+#include "db_helper.h"
 
 Database *DB = NULL;
 
@@ -37,7 +37,62 @@ float grade_needed_on_final(char *course_name) {
 
 void enter_grade_scale(char *course_name) {
   int num;
-  
+  Course *curr_course = get_course(course_name);
 
-  return;
+  printf("What is the minimum grade for An A+?:\n");
+  num = get_valid_integer(0, 100);
+  curr_course->grade_scale.a_plus = num;
+
+  printf("What is the minimum grade for An A?:\n");
+  num = get_valid_integer(0, num -1);
+  curr_course->grade_scale.a = num;
+  
+  printf("What is the minimum grade for An A-?:\n");
+  num = get_valid_integer(0, num -1);
+  curr_course->grade_scale.a_min = num;
+
+  printf("What is the minimum grade for An B+?:\n");
+  num = get_valid_integer(0, num -1);
+  curr_course->grade_scale.b_plus = num;
+
+  printf("What is the minimum grade for An B?:\n");
+  num = get_valid_integer(0, num -1);
+  curr_course->grade_scale.b = num;
+
+  printf("What is the minimum grade for An B-?:\n");
+  num = get_valid_integer(0, num -1);
+  curr_course->grade_scale.b_min = num;
+
+  printf("What is the minimum grade for An C+?:\n");
+  num = get_valid_integer(0, num -1);
+  curr_course->grade_scale.c_plus = num;
+
+  printf("What is the minimum grade for An C?:\n");
+  num = get_valid_integer(0, num -1);
+  curr_course->grade_scale.c = num;
+
+  printf("What is the minimum grade for An C-?:\n");
+  num = get_valid_integer(0, num -1);
+  curr_course->grade_scale.c_min = num;
+
+  printf("What is the minimum grade for An D+?:\n");
+  num = get_valid_integer(0, num -1);
+  curr_course->grade_scale.d_plus = num;
+
+  printf("What is the minimum grade for An D?:\n");
+  num = get_valid_integer(0, num -1);
+  curr_course->grade_scale.d = num;
+
+  printf("What is the minimum grade for An D-?:\n");
+  num = get_valid_integer(0, num -1);
+  curr_course->grade_scale.d_min = num;
+}
+
+Course *get_course(char *course_name) {
+  for (int i = 0; i < DB->courseCount; i++) {
+    if (strcmp_case_insensitive(course_name, DB->courses[i]->course_name))
+      return DB->courses[i];
+  }
+  fprintf(stderr, "Course: %s does not exist in the database\n", course_name);
+  return NULL;
 }
