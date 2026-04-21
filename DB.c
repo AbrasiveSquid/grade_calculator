@@ -10,6 +10,32 @@ void import_grades(char *filename) {
   return;
 }
 
+int add_course(char *course_name) {
+  Course *new_course = malloc(sizeof(Course));
+  if (new_course == NULL) {
+    fprintf(stderr,"Error allocating memory in add_course, please save and exit\n");
+    return 0;
+  }
+  course_name = malloc(sizeof(char) * strlen(course_name) + 1);
+  if (course_name == NULL) {
+    fprintf(stderr,"Error allocating memory in add_course, please save and exit\n");
+    return 0;
+  }
+
+  strcpy(new_course->course_name, course_name);
+
+  new_course->assessment_list = calloc(INIT_SIZE, sizeof(Assessment));
+   if (new_course->assessment_list == NULL) {
+    fprintf(stderr,"Error allocating memory in add_course, please save and exit\n");
+    return 0;
+  }
+  new_course->assessment_capacity = INIT_SIZE;
+  new_course->assessment_count = 0;
+
+  fprintf(stdout, "Successfully added %s\n", course_name);
+  return 1;
+}
+
 
 void save_grades(char *filename) {
   return;
@@ -46,7 +72,7 @@ void enter_grade_scale(char *course_name) {
   printf("What is the minimum grade for An A?:\n");
   num = get_valid_integer(0, num -1);
   curr_course->grade_scale.a = num;
-  
+
   printf("What is the minimum grade for An A-?:\n");
   num = get_valid_integer(0, num -1);
   curr_course->grade_scale.a_min = num;

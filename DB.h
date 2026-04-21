@@ -15,13 +15,16 @@ typedef struct {
   int curr_entries;
   char *description;
 
-}Assessment; 
+}Assessment;
 
 typedef struct {
   // name
   char *course_name;
   Assessment *assessment_list;
-  
+  int assessment_count;
+  int assessment_capacity;
+
+
   float current_grade;
   // grade breakdown
   struct {
@@ -53,6 +56,9 @@ extern Database *DB;
 /* Import grades from a textfile into the database*/
 void import_grades(char *filename);
 
+/* Adds a course to the database */
+int add_course(char *course_name);
+
 /* Exports the database into a textfile to save*/
 void save_grades(char *filename);
 
@@ -76,7 +82,7 @@ void enter_grade_scale(char *course_name);
 
 /* returns the course from the database
 
-Returns: 
+Returns:
   NULL if course doesn't exist
 */
 Course *get_course(char *course_name);

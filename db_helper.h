@@ -15,8 +15,8 @@ But memory is allocated to include the null char
 
 Parameters:
   len:int, length of the string
-  
-Returns: 
+
+Returns:
   Pointer for the string
 */
 char *allocate_string(int len);
@@ -24,7 +24,7 @@ char *allocate_string(int len);
 /* gets a valid integer from the user*/
 int get_valid_integer(int min, int max);
 
-/* validates that input from user was entered correctly*/
+/* validates that input from user was entered correctly */
 bool is_valid_input(int num, char term, int min, int max);
 
 /* compares two strings to check if they are same value, not case sensitive */
