@@ -53,6 +53,9 @@ typedef struct {
 
 extern Database *DB;
 
+/* initializes the database */
+void init_DB(int courseCount, int courseCap);
+
 /* Import grades from a textfile into the database*/
 void import_grades(char *filename);
 

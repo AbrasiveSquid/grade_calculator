@@ -122,3 +122,26 @@ Course *get_course(char *course_name) {
   fprintf(stderr, "Course: %s does not exist in the database\n", course_name);
   return NULL;
 }
+
+void init_DB(int courseCount, int courseCap) {
+  if (courseCap < 1 || courseCount < 1) {
+    fprintf(stderr, "courseCap: %d and courseCount: %d need to be greatert than 0\n",
+      courseCap, courseCount);
+    exit(EXIT_FAILURE);
+  }
+
+  DB  = malloc(sizeof(Database));
+  if (DB == NULL) {
+    fprintf(stderr, "Unable to allocate memory in init_DB, exiting\n");
+    exit(EXIT_FAILURE);
+  }
+
+  DB->courses = calloc(courseCap, sizeof(Course));
+  if (DB->courses == NULL) {
+    fprintf(stderr, "Unable to allocate memory in init_DB, exiting\n");
+    exit(EXIT_FAILURE);
+  }
+
+  DB->courseCap = courseCap;
+  DB->courseCount = courseCount;
+}
