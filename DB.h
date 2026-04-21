@@ -81,7 +81,7 @@ void add_grade(char *course_name, char *assessment_desc, float grade);
 float grade_needed_on_final(char *course_name);
 
 /* adds the cut off for each letter grade into the course object*/
-void enter_grade_scale(char *course_name);
+void enter_grade_scale(Course *curr_course);
 
 /* returns the course from the database
 

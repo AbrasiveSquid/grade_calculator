@@ -31,5 +31,4 @@ void get_user_input(char input_buffer[], int size);
 /* gets input from user to add a new course*/
 void add_course_input(void);
 
-/* checks if a course exists in the database already */
-bool course_exists(char *course_name);
+

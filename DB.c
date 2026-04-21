@@ -11,14 +11,20 @@ void import_grades(char *filename) {
 }
 
 int add_course(char *course_name) {
+  if (DB->courseCount >= DB->courseCap) {
+    if (!(db_resize()))
+      return 0;
+  }
+
   Course *new_course = malloc(sizeof(Course));
   if (new_course == NULL) {
     fprintf(stderr,"Error allocating memory in add_course, please save and exit\n");
     return 0;
   }
-  course_name = malloc(sizeof(char) * strlen(course_name) + 1);
-  if (course_name == NULL) {
+  new_course->course_name = malloc(sizeof(char) * strlen(course_name) + 1);
+  if (new_course->course_name == NULL) {
     fprintf(stderr,"Error allocating memory in add_course, please save and exit\n");
+    free(new_course);
     return 0;
   }
 
@@ -27,11 +33,17 @@ int add_course(char *course_name) {
   new_course->assessment_list = calloc(INIT_SIZE, sizeof(Assessment));
    if (new_course->assessment_list == NULL) {
     fprintf(stderr,"Error allocating memory in add_course, please save and exit\n");
+    free(new_course->course_name);
+    free(new_course);
+
     return 0;
   }
   new_course->assessment_capacity = INIT_SIZE;
   new_course->assessment_count = 0;
+  enter_grade_scale(new_course);
 
+  DB->courses[DB->courseCount] = new_course;
+  DB->courseCount++;
   fprintf(stdout, "Successfully added %s\n", course_name);
   return 1;
 }
@@ -61,9 +73,8 @@ float grade_needed_on_final(char *course_name) {
   return 1;
 }
 
-void enter_grade_scale(char *course_name) {
+void enter_grade_scale(Course *curr_course) {
   int num;
-  Course *curr_course = get_course(course_name);
 
   printf("What is the minimum grade for An A+?:\n");
   num = get_valid_integer(0, 100);

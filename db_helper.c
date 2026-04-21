@@ -19,7 +19,7 @@ int get_valid_integer(int min, int max) {
 
     if(scanf("%d%c", &num, &term) != 2  && is_valid_input(num, term, min, max))
       return num;
-    else 
+    else
       printf("Invalid input, enter an int followed by enter/return key\n");
   }
 }
@@ -33,7 +33,7 @@ bool is_valid_input(int num, char term, int min, int max) {
 }
 
 
-bool strcmp_case_insensitive(const char *str1, const char *str2) { 
+bool strcmp_case_insensitive(const char *str1, const char *str2) {
   int comp;
   while (*str1 != '\0' || *str2 != '\0')
     {
@@ -46,3 +46,29 @@ bool strcmp_case_insensitive(const char *str1, const char *str2) {
   return true;
 }
 
+
+bool course_exists(char *course_name) {
+  if ((strlen(course_name)) < 1)
+    return true;
+
+  for (int i = 0; i < DB->courseCount; i++) {
+    if (strcmp_case_insensitive(DB->courses[i]->course_name, course_name))
+      return true;
+  }
+  return false;
+}
+
+
+int db_resize(void) {
+  Course **tempDB;
+  int new_capacity = (int)DB->courseCap * 1.5;
+  tempDB = realloc(DB->courses, sizeof(*tempDB) *new_capacity);
+  if (tempDB == NULL) {
+    fprintf(stderr, "Failed to resize Database, save now and exit\n");
+    return 0;
+  }
+
+  DB->courses = tempDB;
+  DB->courseCap = new_capacity;
+  return 1;
+}

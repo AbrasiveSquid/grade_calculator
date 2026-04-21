@@ -30,5 +30,11 @@ bool is_valid_input(int num, char term, int min, int max);
 /* compares two strings to check if they are same value, not case sensitive */
 bool strcmp_case_insensitive(const char *str1, const char *str2);
 
+/* checks if a course exists in the database already */
+bool course_exists(char *course_name);
+
+/* resizes the database by 50% */
+int db_resize(void);
+
 
 #endif

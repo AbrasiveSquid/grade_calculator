@@ -129,13 +129,3 @@ void add_course_input(void) {
 
 }
 
-bool course_exists(char *course_name) {
-  if ((strlen(course_name)) < 1)
-    return true;
-
-  for (int i = 0; i < DB->courseCount; i++) {
-    if (strcmp_case_insensitive(DB->courses[i]->course_name, course_name))
-      return true;
-  }
-  return false;
-}
