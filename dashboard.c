@@ -1,5 +1,6 @@
 #include "dashboard.h"
 #include "DB.h"
+#include "db_helper.h"
 
 
 int main(void) {
@@ -68,9 +69,10 @@ void import_grades_input(void) {
 void get_user_input(char input_buffer[], int size) {
   int ch, i = 0;
 
-  while ((ch = getchar()) != '\n' && ch != EOF && i < size-1 )
-    input_buffer[i++] = ch;
-
+  while ((ch = getchar()) != '\n' && ch != EOF && i < size-1 ){
+    if (is_printable_char(ch))
+      input_buffer[i++] = ch;
+}
   input_buffer[i] = '\0';
 }
 

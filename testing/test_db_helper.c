@@ -52,6 +52,57 @@ void test_strcmp_case_insensitive(void) {
   printf("all test_strcmp_case_insensitive tests passed.\n");
 }
 
+void test_is_printable_char(void) {
+  // test lowercase char
+  assert(is_printable_char('a') == 1);
+  assert(is_printable_char('b') == 1);
+  assert(is_printable_char('z') == 1);
+
+  //test uppercase
+  assert(is_printable_char('C') == 1);
+  assert(is_printable_char('D') == 1);
+  assert(is_printable_char('Y') == 1);
+
+  // test punctuation
+  assert(is_printable_char('|') == 1);
+  assert(is_printable_char('~') == 1);
+  assert(is_printable_char(':') == 1);
+  assert(is_printable_char('@') == 1);
+  assert(is_printable_char('=') == 1);
+  assert(is_printable_char('>') == 1);
+
+  // test numbers
+  assert(is_printable_char('0') == 1);
+  assert(is_printable_char('1') == 1);
+  assert(is_printable_char('2') == 1);
+  assert(is_printable_char('8') == 1);
+
+  // test space
+  assert(is_printable_char(' ') == 1);
+
+  // test nonprintable
+  assert(is_printable_char('\0') == 0);
+  assert(is_printable_char('\n') == 0);
+  assert(is_printable_char('\t') == 0);
+  assert(is_printable_char('\a') == 0);
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  printf("all test_is_printable_char tests passed.\n");
+
+}
+
 
 
 
@@ -59,5 +110,6 @@ int main(void) {
 
   test_is_valid_input();
   test_strcmp_case_insensitive();
+  test_is_printable_char();
   return 0;
 }

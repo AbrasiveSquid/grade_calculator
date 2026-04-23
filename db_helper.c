@@ -72,3 +72,10 @@ int db_resize(void) {
   DB->courseCap = new_capacity;
   return 1;
 }
+
+bool is_printable_char(int ch) {
+  if (ch > 31 && ch < 127)
+    return true;
+  return false;
+}
+

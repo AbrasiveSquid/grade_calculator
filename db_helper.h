@@ -36,5 +36,8 @@ bool course_exists(char *course_name);
 /* resizes the database by 50% */
 int db_resize(void);
 
+// checks if the argument is a printable char
+bool is_printable_char(int ch);
+
 
 #endif

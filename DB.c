@@ -76,6 +76,8 @@ float grade_needed_on_final(char *course_name) {
 void enter_grade_scale(Course *curr_course) {
   int num;
 
+  // TODO ISSUE HERE, mabe with get_valid_integer
+
   printf("What is the minimum grade for An A+?:\n");
   num = get_valid_integer(0, 100);
   curr_course->grade_scale.a_plus = num;
