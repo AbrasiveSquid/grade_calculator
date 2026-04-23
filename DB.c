@@ -134,10 +134,9 @@ Course *get_course(char *course_name) {
   return NULL;
 }
 
-void init_DB(int courseCount, int courseCap) {
-  if (courseCap < 1 || courseCount < 1) {
-    fprintf(stderr, "courseCap: %d and courseCount: %d need to be greatert than 0\n",
-      courseCap, courseCount);
+void init_DB(int courseCap) {
+  if (courseCap < 1) {
+    fprintf(stderr, "courseCap: %d must be greater than 0\n", courseCap);
     exit(EXIT_FAILURE);
   }
 
@@ -147,12 +146,32 @@ void init_DB(int courseCount, int courseCap) {
     exit(EXIT_FAILURE);
   }
 
-  DB->courses = calloc(courseCap, sizeof(Course));
-  if (DB->courses == NULL) {
+  DB->courses = malloc(courseCap * sizeof(Course*)); // array of pointers
+  if (DB->courses == NULL) { 
     fprintf(stderr, "Unable to allocate memory in init_DB, exiting\n");
     exit(EXIT_FAILURE);
   }
+  for (int i = 0; i < courseCap; i++) // set the courses array to null
+    DB->courses[i] = NULL;
 
   DB->courseCap = courseCap;
-  DB->courseCount = courseCount;
+  DB->courseCount = 0;
+}
+
+
+void freeDb(void) {
+  if (DB== NULL)
+    return;
+
+  int i = 0;
+  Course *curr_course;
+  for(i = 0; i < DB->courseCap; i++ ) {
+    curr_course = DB->courses[i];
+    if (curr_course != NULL){
+      free(curr_course->assessment_list);
+      free(curr_course);
+    }
+  }
+  free(DB->courses);
+  free(DB);
 }

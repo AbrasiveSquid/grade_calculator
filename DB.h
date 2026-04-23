@@ -54,7 +54,7 @@ typedef struct {
 extern Database *DB;
 
 /* initializes the database */
-void init_DB(int courseCount, int courseCap);
+void init_DB(int courseCap);
 
 /* Import grades from a textfile into the database*/
 void import_grades(char *filename);
@@ -89,6 +89,9 @@ Returns:
   NULL if course doesn't exist
 */
 Course *get_course(char *course_name);
+
+// Frees all the allocated memory for the database
+void freeDb(void);
 
 
 #endif

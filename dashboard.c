@@ -37,6 +37,7 @@ int main(void) {
         remove_courses_input();
         break;
       case 7:
+        freeDb();
         return 0;
       default:
         fprintf(stderr, "Incorrect option selected\n");
@@ -76,7 +77,7 @@ void get_user_input(char input_buffer[], int size) {
 
 void save_grades_input(void) {
   if (DB == NULL) {
-    init_DB(0, INIT_SIZE);
+    init_DB(INIT_SIZE);
   }
 
   return;
@@ -85,7 +86,7 @@ void save_grades_input(void) {
 
 void list_courses_input(void) {
    if (DB == NULL) {
-    init_DB(0, INIT_SIZE);
+    init_DB(INIT_SIZE);
   }
   return;
 }
@@ -93,21 +94,21 @@ void list_courses_input(void) {
 
 void edit_courses_input(void) {
    if (DB == NULL) {
-    init_DB(0, INIT_SIZE);
+    init_DB(INIT_SIZE);
   }
   return;
 }
 
 void remove_courses_input(void) {
    if (DB == NULL) {
-    init_DB(0, INIT_SIZE);
+    init_DB(INIT_SIZE);
   }
   return;
 }
 
 void add_course_input(void) {
   if (DB == NULL) {
-    init_DB(0, INIT_SIZE);
+    init_DB(INIT_SIZE);
   }
   char course_name[100];
 

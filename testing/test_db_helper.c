@@ -49,10 +49,6 @@ void test_strcmp_case_insensitive(void) {
   assert(strcmp_case_insensitive("", "hello") == 0);
   assert(strcmp_case_insensitive("hello", "") == 0);
 
-
-
-
-
   printf("all test_strcmp_case_insensitive tests passed.\n");
 }
 
