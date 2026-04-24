@@ -17,7 +17,7 @@ int get_valid_integer(int min, int max) {
   while (1) {
     printf("Enter an integer between %d - %d\n", min, max);
 
-    if(scanf("%d%c", &num, &term) != 2  && is_valid_input(num, term, min, max))
+    if(scanf("%d%c", &num, &term) == 2  && is_valid_input(num, term, min, max))
       return num;
     else
       printf("Invalid input, enter an int followed by enter/return key\n");

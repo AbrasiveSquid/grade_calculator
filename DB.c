@@ -121,10 +121,6 @@ void enter_grade_scale(Course *curr_course) {
   printf("What is the minimum grade for An D?:\n");
   num = get_valid_integer(0, num -1);
   curr_course->grade_scale.d = num;
-
-  printf("What is the minimum grade for An D-?:\n");
-  num = get_valid_integer(0, num -1);
-  curr_course->grade_scale.d_min = num;
 }
 
 Course *get_course(char *course_name) {

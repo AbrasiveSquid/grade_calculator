@@ -39,7 +39,6 @@ typedef struct {
     int c_min;
     int d_plus;
     int d;
-    int d_min;
   }grade_scale;
 }Course;
 
