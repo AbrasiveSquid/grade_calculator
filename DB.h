@@ -10,36 +10,38 @@ Holds the Database, and functions to interact with the database
 #define INIT_SIZE 10
 
 typedef struct {
-  float grade;
+  float grade; // grade for the entry
+  float weight; // weight towards the total course grade for entry
+
+}GradeEntry;
+
+typedef struct {
+  int equal_weighting; // flag that is set so all entries are same weight
   int total_entries;
   int curr_entries;
+  GradeEntry *entries; // array of structs of grade and weightings
   char *description;
-
+  float current_grade; // current grade for assessment
 }Assessment;
+
+  typedef struct {
+    int threshold;
+    char letter_grade[3];
+
+  }GradeThreshold;
 
 typedef struct {
   // name
   char *course_name;
-  Assessment *assessment_list;
+  Assessment **assessment_list;
   int assessment_count;
   int assessment_capacity;
 
 
   float current_grade;
-  // grade breakdown
-  struct {
-    int a_plus;
-    int a;
-    int a_min;
-    int b_plus;
-    int b;
-    int b_min;
-    int c_plus;
-    int c;
-    int c_min;
-    int d_plus;
-    int d;
-  }grade_scale;
+
+  GradeThreshold grade_scale[11]; // array of structs of the grade thresholds
+
 }Course;
 
 typedef struct {
@@ -91,6 +93,12 @@ Course *get_course(char *course_name);
 
 // Frees all the allocated memory for the database
 void freeDb(void);
+
+/* prints out the details of the course */
+void course_details(int index);
+
+// Returns the current letter grade for the course
+char *letter_grade(Course *curr_course, float grade);
 
 
 #endif

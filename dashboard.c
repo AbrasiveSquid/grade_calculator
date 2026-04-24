@@ -90,7 +90,7 @@ void list_courses_input(void) {
    if (DB == NULL) {
     init_DB(INIT_SIZE);
   }
-  return;
+  list_courses();
 }
 
 
