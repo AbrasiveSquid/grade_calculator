@@ -9,7 +9,7 @@ int main(void) {
   DB = NULL;
 
   while (1) {
-    printf("\nSelect an option:\n1. Import Grades\n2. Save Grades\n3. List Courses\n4. Add Course\n5. Edit Course\n6. Remove Course\n7. Exit\n>  ");
+    printf("\nSelect an option:\n1. Import Grades\n2. Save Grades\n3. List Courses/Add Grade\n4. Add Course\n5. Edit Course\n6. Remove Course\n7. Exit\n>  ");
 
     if (scanf("%d", &option) != 1 || option < 1 || option > 7) {
       fprintf(stderr, "Incorrect option selected: ");
@@ -87,10 +87,33 @@ void save_grades_input(void) {
 
 
 void list_courses_input(void) {
+  int num, choice;
+
    if (DB == NULL) {
     init_DB(INIT_SIZE);
   }
-  list_courses();
+  
+  while (1) {
+    list_courses();
+    printf("\nEnter the course number or enter '%d' to exit\n", DB->courseCount+1);
+    num = get_valid_integer(1, DB->courseCount+1);
+
+    if (num == DB->courseCount+1)
+      break;
+    else {
+      printf("Enter\n\t'1' to list course assessments\n\t'2' to add a grade:\n");
+    }
+    choice = get_valid_integer(1, 2);
+    
+    if (choice == 1) 
+      course_details(num-1);
+    else {
+      printf("Enter the assessment to add a grade:\n");
+      get_grade_input(DB->courses[num-1]);
+    }
+
+    } 
+
 }
 
 

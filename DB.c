@@ -2,6 +2,8 @@
 
 #include "DB.h"
 #include "db_helper.h"
+#include <cstdlib>
+#include <string.h>
 
 Database *DB = NULL;
 
@@ -59,23 +61,19 @@ void list_courses(void) {
   int num;
 
   printf("Current Courses:\n\n");
+  if (DB->courseCount == 0) {
+    printf("No courses exist in the database\n");
+    return;
+  }
+
   for (int i = 0; i < DB->courseCount; i++) {
     curr_course = DB->courses[i];
     if (curr_course == NULL)
       continue;
     printf("%d. %s\n", i+1, curr_course->course_name);
   }
-
-  while (1) {
-  printf("\nEnter the course number or enter '%d' to exit\n", DB->courseCount+1);
-  num = get_valid_integer(1, DB->courseCount+1);
-
-  if (num == DB->courseCount+1)
-    break;
-  course_details(num-1);
-  } 
-
 }
+
 
 void edit_course(char *course_name) {
   return;
@@ -85,12 +83,76 @@ void remove_course(char *course_name) {
   return ;
 }
 
-void add_grade(char *course_name, char *assessment_desc, float grade) {
+void add_grade(int course_index, int assess_index, float grade) {
   return;
 }
 
+void get_grade_input(int course_index) {
+  Course *curr_course = DB->courses[course_index];
+  int num, strlen, total_entries, equal_weights;
+  char input_buf[100];
+ 
+
+  while(1){
+    printf("Enter assessment number to add, or enter '0' to add a new assessment. Enter '%d' to exit\n", curr_course->assessment_count +1);
+    assessment_list(curr_course);
+    num = get_valid_integer(0, curr_course->assessment_count+1);
+    if (num == curr_course->assessment_count+1)
+      break;
+    else if (num == 0) {
+      printf("Enter the name of the assessment:\n> ");
+      // gets name of assessment, allocates mem on heap for it, then copies to variable
+      if (fgets(input_buf, 99, stdin)) {
+        strlen = strcspn(input_buf, "\n");
+        input_buf[strlen] = '\0';
+      }
+      printf("How many %s will you have for this type: ", input_buf);
+      total_entries = get_valid_integer(1, 100);
+
+      printf("Do all %ss have the same grade weighting?\n'1' for yes or '0' for no", input_buf);
+      equal_weights = get_valid_integer(0, 1);
+      Assessment *new_assess = create_assessment(input_buf, equal_weights, total_entries);
+      // TODO HERE, NEED TO ADD ASSESSMENT TO DATABASE
+      
+
+    }
+    
+  }
+}
+
+
 float grade_needed_on_final(char *course_name) {
   return 1;
+}
+
+Assessment *create_assessment(char *assess_name, int equal_weights, int total_entries) {
+  Assessment *new_assess = malloc(sizeof(Assessment));
+
+  if (new_assess == NULL) {
+    fprintf(stderr, "Error allocating memory for a new assessment\n");
+    exit(EXIT_FAILURE);
+  }
+
+  new_assess->total_entries = total_entries;
+  new_assess->curr_entries = 0;
+  
+  new_assess->description = allocate_string(strlen(assess_name));
+  strcpy(new_assess->description, assess_name);
+
+  if (equal_weights)
+    new_assess->equal_weighting = 1;
+  else
+    new_assess->equal_weighting = 0;
+
+  new_assess->entries = calloc(total_entries, sizeof(*(new_assess->entries)));
+  if (new_assess->entries == NULL) {
+    fprintf(stderr, "Error allocating memory for a new assessment\n");
+    exit(EXIT_FAILURE);
+  }
+
+  new_assess->current_grade = 0.0f;
+
+  return new_assess;
 }
 
 void enter_grade_scale(Course *curr_course) {
@@ -187,6 +249,20 @@ void course_details(int index) {
   }
 }
 
+void assessment_list(Course * curr_course) {
+  Assessment *curr_assess;
+  printf("Assessments:\n");
+  if (curr_course->assessment_count == 0) {
+    printf("\tNo Assessments for this course\n");
+    return;
+  }
+
+  for(int i = 0; i < curr_course->assessment_count; i++) {
+    curr_assess = curr_course->assessment_list[i];
+    printf("%d. %s: Number of entries: %d\n", i+1, curr_assess->description, curr_assess->curr_entries);
+  }
+}
+
 char *letter_grade(Course *curr_course, float grade) {
   for (int i = 0; i < sizeof(curr_course->grade_scale)/sizeof(curr_course->grade_scale[0]); i++) {
     if (grade >= curr_course->grade_scale[i].threshold)
@@ -194,3 +270,4 @@ char *letter_grade(Course *curr_course, float grade) {
   }
   return "F";
 }
+

@@ -76,7 +76,8 @@ void edit_course(char *course_name);
 void remove_course(char *course_name);
 
 /* adds a grade to an existing course in the database*/
-void add_grade(char *course_name, char *assessment_desc, float grade);
+void add_grade(int course_index, int assess_index, float grade);
+
 
 /* Calculates the percentage needed to get a mark on the final*/
 float grade_needed_on_final(char *course_name);
@@ -99,6 +100,16 @@ void course_details(int index);
 
 // Returns the current letter grade for the course
 char *letter_grade(Course *curr_course, float grade);
+
+// Prints out the list of a course's assessments
+void assessment_list(Course * curr_course);
+
+// gets input from user on what assessment to add a grade
+void get_grade_input(int course_index);
+
+// creates and returns a pointer to a new assessment
+Assessment *create_assessment(char *assess_name, int equal_weights, int total_entries);
+
 
 
 #endif

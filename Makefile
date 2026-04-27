@@ -48,6 +48,9 @@ run_test_free_db: test_freeDB
 	gcc -std=c99 -Wall -g -fsanitize=address testing/test_freeDB.c db_helper.c DB.c -o test_freeDB
 	./test_freeDB
 
+run_add_course: dashboard
+	cat testing/add_course.in - | ./dashboard
+
 
 clean:
 	rm -rf $(TARGET) $(TESTS) *.o

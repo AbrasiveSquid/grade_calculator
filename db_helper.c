@@ -14,10 +14,12 @@ char *allocate_string(int len) {
 int get_valid_integer(int min, int max) {
   int num;
   char term;
+  char input_buff[5];
   while (1) {
     printf("Enter an integer between %d - %d\n", min, max);
+    fgets(input_buff, 4, stdin);
 
-    if(scanf("%d%c", &num, &term) == 2  && is_valid_input(num, term, min, max))
+    if(sscanf(input_buff,"%d%c", &num, &term) == 2  && is_valid_input(num, term, min, max))
       return num;
     else
       printf("Invalid input, enter an int followed by enter/return key\n");
