@@ -163,7 +163,52 @@ void get_grade_input(Course *curr_course) {
     }
     curr_assess->entries[curr_assess->curr_entries] = new_grade;
     curr_assess->curr_entries++;
+    calculate_assessment_grade(curr_assess);
+    calculate_course_grade(curr_course);
   }
+}
+
+void calculate_assessment_grade(Assessment *curr_assess) {
+  float grade = 0.0f;
+  float total_weight = 0.0f;
+  if (curr_assess->curr_entries == 0) {
+    curr_assess->current_grade = 0.0f;
+    return;
+  }
+  if (curr_assess->equal_weighting) {
+  for (int i = 0; i < curr_assess->curr_entries; i++) {
+    grade += curr_assess->entries[i]->grade; 
+  }
+  grade /= curr_assess->curr_entries;
+  curr_assess->current_grade = grade;
+
+}
+  // if each grade has own weight 
+  else {
+    for (int i = 0; i < curr_assess->curr_entries; i++) {
+      grade += curr_assess->entries[i]->grade * curr_assess->entries[i]->weight;
+      total_weight += curr_assess->entries[i]->weight; 
+    }
+    curr_assess->weight = total_weight;
+    curr_assess->current_grade = grade / total_weight;
+  }
+} 
+
+void calculate_course_grade(Course *curr_course) {
+  float grade = 0.0f;
+  float current_weight = 0.0f;
+
+  if (curr_course->assessment_count == 0) {
+    curr_course->current_grade = 0.0f;
+    return;
+  }
+
+  for (int i = 0; i <curr_course->assessment_count; i++) {
+    grade += (curr_course->assessment_list[i]->current_grade) * (curr_course->assessment_list[i]->weight/100.0f);
+    current_weight += curr_course->assessment_list[i]->weight;
+  }
+
+  curr_course->current_grade = (grade/current_weight) * 100;
 }
 
 
@@ -215,6 +260,7 @@ void enter_grade_scale(Course *curr_course) {
     num = get_valid_integer(0, num -1);
 
     strcpy(new_grade.letter_grade, labels[i]);
+    new_grade.threshold = num;
     curr_course->grade_scale[count++] = new_grade;
   }
 }
@@ -282,9 +328,11 @@ void course_details(int index) {
     curr_assess = curr_course->assessment_list[i];
     
     if (curr_assess->curr_entries > 1){
+      printf("\t%s: Assessment Grade: %.2f, %s\n", curr_assess->description, curr_assess->current_grade,letter_grade(curr_course, curr_assess->current_grade));
+
       for (j = 0; j < curr_assess->curr_entries; j++) {
-        printf("%s #%d: ", curr_assess->description, j+1);
-        printf("Grade: %2.f, %s",curr_assess->current_grade, letter_grade(curr_course, curr_assess->current_grade));
+        printf("\t\t%s #%d: ", curr_assess->description, j+1);
+        printf("Grade: %.2f, %s\n",curr_assess->entries[j]->grade, letter_grade(curr_course, curr_assess->entries[j]->grade));
       }
     }
 
@@ -297,7 +345,7 @@ void course_details(int index) {
 
 void assessment_list(Course * curr_course) {
   Assessment *curr_assess;
-  printf("Assessments:\n");
+  printf("\nAssessments:\n");
   if (curr_course->assessment_count == 0) {
     printf("\tNo Assessments for this course\n");
     return;
@@ -305,14 +353,14 @@ void assessment_list(Course * curr_course) {
 
   for(int i = 0; i < curr_course->assessment_count; i++) {
     curr_assess = curr_course->assessment_list[i];
-    printf("%d. %s: Number of entries: %d\n", i+1, curr_assess->description, curr_assess->curr_entries);
+    printf("%d. %s\n\tNumber of entries: %d\n", i+1, curr_assess->description, curr_assess->curr_entries);
   }
 }
 
 char *letter_grade(Course *curr_course, float grade) {
   for (int i = 0; i < sizeof(curr_course->grade_scale)/sizeof(curr_course->grade_scale[0]); i++) {
-    if (grade >= curr_course->grade_scale[i].threshold)
-      return curr_course->grade_scale->letter_grade;
+    if (grade >= (float)curr_course->grade_scale[i].threshold)
+      return curr_course->grade_scale[i].letter_grade;
   }
   return "F";
 }

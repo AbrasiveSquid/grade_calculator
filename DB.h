@@ -110,5 +110,12 @@ void get_grade_input(Course *curr_course);
 // creates and returns a pointer to a new assessment
 Assessment *create_assessment(char *assess_name, int equal_weights, float weights, int total_entries);
 
+// calculates and upates the current_grade for an assessment
+void calculate_assessment_grade(Assessment *curr_assess);
+
+// calculates and upates the current_grade for a course
+void calculate_course_grade(Course *curr_course);
+
+
 
 #endif
