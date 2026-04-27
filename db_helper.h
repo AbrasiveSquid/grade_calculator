@@ -24,8 +24,14 @@ char *allocate_string(int len);
 /* gets a valid integer from the user*/
 int get_valid_integer(int min, int max);
 
-/* validates that input from user was entered correctly */
+/* validates that int input from user was entered correctly */
 bool is_valid_input(int num, char term, int min, int max);
+
+/* gets a valid float from the user*/
+float get_valid_float(float min, float max);
+
+/* validates that float input from user was entered correctly */
+bool is_valid_float_input(float num, char term, float min, float max);
 
 /* compares two strings to check if they are same value, not case sensitive */
 bool strcmp_case_insensitive(const char *str1, const char *str2);
@@ -38,6 +44,13 @@ int db_resize(void);
 
 // checks if the argument is a printable char
 bool is_printable_char(int ch);
+
+// resizes a courses assessment array
+int resize_course_assessments(Course *curr_course);
+
+// resizes a courses assessment array
+int resize_assessment_entries(Assessment *curr_assessment);
+
 
 
 #endif

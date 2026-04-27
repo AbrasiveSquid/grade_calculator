@@ -2,7 +2,6 @@
 
 #include "DB.h"
 #include "db_helper.h"
-#include <cstdlib>
 #include <string.h>
 
 Database *DB = NULL;
@@ -58,7 +57,6 @@ void save_grades(char *filename) {
 
 void list_courses(void) {
   Course *curr_course;
-  int num;
 
   printf("Current Courses:\n\n");
   if (DB->courseCount == 0) {
@@ -83,18 +81,27 @@ void remove_course(char *course_name) {
   return ;
 }
 
-void add_grade(int course_index, int assess_index, float grade) {
-  return;
+GradeEntry *create_grade_entry(float grade, float weight) {
+  GradeEntry *new_grade = malloc(sizeof(GradeEntry));
+  if (new_grade == NULL) {
+    fprintf(stderr, "Error allocating memory for new grade entry");
+    return NULL;
+  }
+
+  new_grade->grade = grade;
+  new_grade->weight = weight;
+  return new_grade;
 }
 
-void get_grade_input(int course_index) {
-  Course *curr_course = DB->courses[course_index];
+void get_grade_input(Course *curr_course) {
+  Assessment *curr_assess;
   int num, strlen, total_entries, equal_weights;
+  float grade, weight=0.0f;
   char input_buf[100];
  
 
   while(1){
-    printf("Enter assessment number to add, or enter '0' to add a new assessment. Enter '%d' to exit\n", curr_course->assessment_count +1);
+    printf("\nEnter assessment number to add, or enter '0' to add a new assessment. Enter '%d' to exit\n", curr_course->assessment_count +1);
     assessment_list(curr_course);
     num = get_valid_integer(0, curr_course->assessment_count+1);
     if (num == curr_course->assessment_count+1)
@@ -109,14 +116,53 @@ void get_grade_input(int course_index) {
       printf("How many %s will you have for this type: ", input_buf);
       total_entries = get_valid_integer(1, 100);
 
-      printf("Do all %ss have the same grade weighting?\n'1' for yes or '0' for no", input_buf);
+      printf("Do all %s have the same grade weighting?\n'1' for yes or '0' for no\n", input_buf);
       equal_weights = get_valid_integer(0, 1);
-      Assessment *new_assess = create_assessment(input_buf, equal_weights, total_entries);
-      // TODO HERE, NEED TO ADD ASSESSMENT TO DATABASE
-      
 
+      if (equal_weights) {
+        printf("What is the total grade weight of all the %s? ", input_buf);
+        weight = get_valid_float(0.0f, 100.0f);
+      }
+
+      // adds assessment to course and resizes if necessary
+      Assessment *new_assess = create_assessment(input_buf, equal_weights, weight, total_entries);
+      if (curr_course->assessment_count >= curr_course->assessment_capacity) {
+        if (!(resize_course_assessments(curr_course))) {
+          fprintf(stderr,"Unable to allocate memory to resize, save and exit now\n");
+          return;
+        }
+      }
+      curr_course->assessment_list[curr_course->assessment_count] = new_assess;
+      curr_course->assessment_count++;
+
+      num = curr_course->assessment_count; // set so can get right index to add grade entry
+    }
+
+    // get grade entry details
+    curr_assess = curr_course->assessment_list[num-1]; // subtract 1 because stdout was 1 indexed
+    printf("What grade did you get for this %s: ", curr_assess->description);
+    grade = get_valid_float(0.0f, 100.00f);
+    if(!(curr_assess->equal_weighting)) {
+      printf("What is the weighting of this %s? ", curr_assess->description);
+      weight = get_valid_float(0.0f, 100.00f);
+    }
+    else
+      weight = 0.0f;
+    GradeEntry *new_grade = create_grade_entry(grade, weight);
+    if (new_grade == NULL) {
+      fprintf(stderr, "Error allocating memory, exit and save now\n");
+      return;
     }
     
+    if (curr_assess->curr_entries >= curr_assess->total_entries) {
+      // need to resize
+       if (!(resize_assessment_entries(curr_assess))) {
+          fprintf(stderr,"Unable to allocate memory to resize, save and exit now\n");
+          return;
+        }
+    }
+    curr_assess->entries[curr_assess->curr_entries] = new_grade;
+    curr_assess->curr_entries++;
   }
 }
 
@@ -125,7 +171,7 @@ float grade_needed_on_final(char *course_name) {
   return 1;
 }
 
-Assessment *create_assessment(char *assess_name, int equal_weights, int total_entries) {
+Assessment *create_assessment(char *assess_name, int equal_weights, float weights, int total_entries) {
   Assessment *new_assess = malloc(sizeof(Assessment));
 
   if (new_assess == NULL) {
@@ -143,6 +189,8 @@ Assessment *create_assessment(char *assess_name, int equal_weights, int total_en
     new_assess->equal_weighting = 1;
   else
     new_assess->equal_weighting = 0;
+
+  new_assess->weight = weights;
 
   new_assess->entries = calloc(total_entries, sizeof(*(new_assess->entries)));
   if (new_assess->entries == NULL) {
@@ -204,7 +252,6 @@ void init_DB(int courseCap) {
   DB->courseCount = 0;
 }
 
-
 void freeDb(void) {
   if (DB== NULL)
     return;
@@ -221,7 +268,6 @@ void freeDb(void) {
   free(DB->courses);
   free(DB);
 }
-
 
 void course_details(int index) {
   Course *curr_course = DB->courses[index];

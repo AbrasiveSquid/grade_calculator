@@ -44,11 +44,9 @@ int main(void) {
         fprintf(stderr, "Incorrect option selected\n");
         continue;
     }
-
   }
   return 0;
 }
-
 
 void import_grades_input(void) {
   FILE *fp;
@@ -76,7 +74,6 @@ void get_user_input(char input_buffer[], int size) {
   input_buffer[i] = '\0';
 }
 
-
 void save_grades_input(void) {
   if (DB == NULL) {
     init_DB(INIT_SIZE);
@@ -84,7 +81,6 @@ void save_grades_input(void) {
 
   return;
 }
-
 
 void list_courses_input(void) {
   int num, choice;
@@ -111,11 +107,8 @@ void list_courses_input(void) {
       printf("Enter the assessment to add a grade:\n");
       get_grade_input(DB->courses[num-1]);
     }
-
-    } 
-
+  } 
 }
-
 
 void edit_courses_input(void) {
    if (DB == NULL) {
@@ -152,6 +145,5 @@ void add_course_input(void) {
     else
       save_grades_input();
   }
-
 }
 

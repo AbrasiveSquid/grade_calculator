@@ -17,9 +17,10 @@ typedef struct {
 
 typedef struct {
   int equal_weighting; // flag that is set so all entries are same weight
+  float weight;
   int total_entries;
   int curr_entries;
-  GradeEntry *entries; // array of structs of grade and weightings
+  GradeEntry **entries; // array of structs of grade and weightings
   char *description;
   float current_grade; // current grade for assessment
 }Assessment;
@@ -75,9 +76,8 @@ void edit_course(char *course_name);
 /*Removes a course permanently from the database*/
 void remove_course(char *course_name);
 
-/* adds a grade to an existing course in the database*/
-void add_grade(int course_index, int assess_index, float grade);
-
+/* creates and returns a Gradeentry for an existing course in the database*/
+GradeEntry *create_grade_entry(float grade, float weight);
 
 /* Calculates the percentage needed to get a mark on the final*/
 float grade_needed_on_final(char *course_name);
@@ -105,11 +105,10 @@ char *letter_grade(Course *curr_course, float grade);
 void assessment_list(Course * curr_course);
 
 // gets input from user on what assessment to add a grade
-void get_grade_input(int course_index);
+void get_grade_input(Course *curr_course);
 
 // creates and returns a pointer to a new assessment
-Assessment *create_assessment(char *assess_name, int equal_weights, int total_entries);
-
+Assessment *create_assessment(char *assess_name, int equal_weights, float weights, int total_entries);
 
 
 #endif
