@@ -75,11 +75,14 @@ void get_user_input(char input_buffer[], int size) {
 }
 
 void save_grades_input(void) {
+  char filename[200];
   if (DB == NULL) {
     init_DB(INIT_SIZE);
   }
+  printf("Enter the filename to save: ");
+  get_user_input(filename, sizeof(filename)/sizeof(filename[0]));
 
-  return;
+  save_grades(filename);
 }
 
 void list_courses_input(void) {

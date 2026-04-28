@@ -52,7 +52,43 @@ int add_course(char *course_name) {
 
 
 void save_grades(char *filename) {
-  return;
+  FILE *fp;
+  int i,j,k,h;
+  Course *curr_course;
+  Assessment *curr_assess;
+  GradeEntry *curr_entry;
+
+  fp = fopen(filename, "w");
+  if (fp == NULL) {
+    fprintf(stderr, "\nCannot open file: %s, file was not saved\n", filename);
+    return;
+  }
+
+  // write each course as csv file
+
+  for (i = 0; i < DB->courseCount; i++) {
+    curr_course = DB->courses[i];
+    fprintf(fp, "course,%s",curr_course->course_name);
+    // write the grade scalesa
+    for (h = 0; h < 11; h++) {
+      fprintf(fp,",%d", curr_course->grade_scale[h].threshold);
+    } 
+    fprintf(fp,"\n");
+
+    // write out each assessment
+    
+    for (j = 0; j< curr_course->assessment_count; j++) {
+      curr_assess = curr_course->assessment_list[j];
+      fprintf(fp, "assessment,%s,%d,%.2f,%d,%d\n", curr_assess->description,curr_assess->equal_weighting, curr_assess->weight,curr_assess->total_entries, curr_assess->curr_entries);
+  
+      // write out each grade entry
+
+      for (k=0; k < curr_assess->curr_entries; k++) {
+        curr_entry = curr_assess->entries[k];
+        fprintf(fp, "entry,%.2f,%.2f\n",curr_entry->grade, curr_entry->weight);
+      }
+    }
+  }
 }
 
 void list_courses(void) {
