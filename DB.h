@@ -116,6 +116,8 @@ void calculate_assessment_grade(Assessment *curr_assess);
 // calculates and upates the current_grade for a course
 void calculate_course_grade(Course *curr_course);
 
+// creates a course and returns it
+Course *create_course(char *course_name);
 
 
 #endif

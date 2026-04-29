@@ -8,8 +8,108 @@ Database *DB = NULL;
 
 
 void import_grades(char *filename) {
-  return;
+  FILE *fp;
+  char input_buffer[500];
+  char *curr_data;
+  char assessment_name[100];
+  int equal_weights, total_entries, curr_entries = 0;
+  float weight;
+
+  Course *curr_course = NULL;
+  Assessment *curr_assess = NULL;
+  GradeEntry *curr_entry = NULL;
+  int num,i, threshold;
+
+  fp = fopen(filename, "r");
+  if (fp == NULL) {
+    fprintf(stderr,"\nUnable to open file: %s\n", filename);
+    return;
+  }
+
+  if (DB != NULL) {
+    freeDb();
+  }
+
+  // read first line to initialize DB
+  fgets(input_buffer,500,fp);
+  if ((sscanf(input_buffer, "course_count,%d",&num) != 1) || num < 1) {
+    fprintf(stderr,"incorrect format for first line: %s\nExiting\n", input_buffer);
+    return;
+  } 
+  init_DB(num);
+
+  while (fgets(input_buffer,500,fp)) {
+    input_buffer[strcspn(input_buffer, "\n")] = '\0';
+    if (strncmp(input_buffer, "course", 6) == 0) {
+      curr_data = strtok(input_buffer, ","); // get course name
+      curr_course = create_course(curr_data);
+      // add grade scale
+      for (i = 0; i< 11; i++) {
+        curr_data = strtok(NULL, ",");
+        if ((sscanf(curr_data, "%d", &threshold))!= ! 1) {
+          fprintf(stderr,"incorrect format for line: %s\nExiting\n", input_buffer);
+          return;
+        }
+        curr_course->grade_scale[i].threshold = threshold;
+      }
+      } 
+      // TODO IS THIS HOW I WANT TO DO IT? Think aobut this more
+    else if (strncmp(input_buffer, "assessment", 10) == 0) {
+      if (curr_course == NULL) {
+         fprintf(stderr,"incorrect format for line: %s\nExiting\n", input_buffer);
+          return;
+      }
+      curr_data = strtok(input_buffer, ",");
+      strncpy(assessment_name, curr_data, 99);
+      
+      // copy equal weight
+      curr_data = strtok(NULL, ",");
+      if ((sscanf(curr_data, "%d", &equal_weights))!= ! 1) {
+        fprintf(stderr,"incorrect format for line: %s\nExiting\n", input_buffer);
+        return;
+      } 
+
+      // copy weight
+      curr_data = strtok(NULL, ",");
+      if ((sscanf(curr_data, "%f", &weight))!= ! 1) {
+        fprintf(stderr,"incorrect format for line: %s\nExiting\n", input_buffer);
+        return;
+      } 
+
+      // copy totalentries
+      curr_data = strtok(NULL, ",");
+      if ((sscanf(curr_data, "%d", &total_entries))!= ! 1) {
+        fprintf(stderr,"incorrect format for line: %s\nExiting\n", input_buffer);
+        return;
+      } 
+
+      // copy curr_entries
+      curr_data = strtok(NULL, ",");
+      if ((sscanf(curr_data, "%d", &curr_entries))!= ! 1) {
+        fprintf(stderr,"incorrect format for line: %s\nExiting\n", input_buffer);
+        return;
+      } 
+      curr_assess = create_assessment(assessment_name, equal_weights, weight, total_entries);
+      if (curr_assess == NULL) {
+        fprintf(stderr, "Error creating an Assessment, exiting\n");
+        return;
+      }
+    }
+    else if (strncmp(input_buffer, "entry", 5) == 0) {
+
+      
+    }
+    else {
+      fprintf(stderr,"Incorrect formatted file, line with error: %s\nExiting...\n", input_buffer);
+      return;
+    }
+  }
+
+  
+  
 }
+
+
 
 int add_course(char *course_name) {
   if (DB->courseCount >= DB->courseCap) {
@@ -17,39 +117,48 @@ int add_course(char *course_name) {
       return 0;
   }
 
-  Course *new_course = malloc(sizeof(Course));
+  Course *new_course = create_course(course_name);
   if (new_course == NULL) {
-    fprintf(stderr,"Error allocating memory in add_course, please save and exit\n");
-    return 0;
-  }
-  new_course->course_name = malloc(sizeof(char) * strlen(course_name) + 1);
-  if (new_course->course_name == NULL) {
-    fprintf(stderr,"Error allocating memory in add_course, please save and exit\n");
-    free(new_course);
-    return 0;
+      fprintf(stderr,"Error allocating memory in add_course, please save and exit\n");
+      return 0;
   }
 
-  strcpy(new_course->course_name, course_name);
-
-  new_course->assessment_list = calloc(INIT_SIZE, sizeof(Assessment));
-   if (new_course->assessment_list == NULL) {
-    fprintf(stderr,"Error allocating memory in add_course, please save and exit\n");
-    free(new_course->course_name);
-    free(new_course);
-
-    return 0;
-  }
-  new_course->assessment_capacity = INIT_SIZE;
-  new_course->assessment_count = 0;
   enter_grade_scale(new_course);
-  new_course->current_grade = 0.0f;
-
   DB->courses[DB->courseCount] = new_course;
   DB->courseCount++;
   fprintf(stdout, "Successfully added %s\n", course_name);
   return 1;
 }
 
+Course *create_course(char *course_name) {
+  Course *new_course = malloc(sizeof(Course));
+  if (new_course == NULL) {
+    fprintf(stderr,"Error allocating memory in create_course\n");
+    return NULL;
+  }
+
+  new_course->course_name = malloc(sizeof(char) * strlen(course_name) + 1);
+  if (new_course->course_name == NULL) {
+    fprintf(stderr,"Error allocating memory in create_course\n");
+    free(new_course);
+    return NULL;
+  }
+
+  strcpy(new_course->course_name, course_name);
+
+  new_course->assessment_list = calloc(INIT_SIZE, sizeof(Assessment));
+   if (new_course->assessment_list == NULL) {
+    fprintf(stderr,"Error allocating memory in create_course\n");
+    free(new_course->course_name);
+    free(new_course);
+    return NULL;
+  }
+  new_course->assessment_capacity = INIT_SIZE;
+  new_course->assessment_count = 0;
+  new_course->current_grade = 0.0f;
+
+  return new_course;
+}
 
 void save_grades(char *filename) {
   FILE *fp;
@@ -66,10 +175,12 @@ void save_grades(char *filename) {
 
   // write each course as csv file
 
+  fprintf(fp,"course_count,%d\n",DB->courseCount);
+
   for (i = 0; i < DB->courseCount; i++) {
     curr_course = DB->courses[i];
     fprintf(fp, "course,%s",curr_course->course_name);
-    // write the grade scalesa
+    // write the grade scales
     for (h = 0; h < 11; h++) {
       fprintf(fp,",%d", curr_course->grade_scale[h].threshold);
     } 
@@ -81,7 +192,7 @@ void save_grades(char *filename) {
       curr_assess = curr_course->assessment_list[j];
       fprintf(fp, "assessment,%s,%d,%.2f,%d,%d\n", curr_assess->description,curr_assess->equal_weighting, curr_assess->weight,curr_assess->total_entries, curr_assess->curr_entries);
   
-      // write out each grade entry
+      // write out each grade entry 
 
       for (k=0; k < curr_assess->curr_entries; k++) {
         curr_entry = curr_assess->entries[k];
@@ -107,7 +218,6 @@ void list_courses(void) {
     printf("%d. %s\n", i+1, curr_course->course_name);
   }
 }
-
 
 void edit_course(char *course_name) {
   return;
@@ -246,7 +356,6 @@ void calculate_course_grade(Course *curr_course) {
 
   curr_course->current_grade = (grade/current_weight) * 100;
 }
-
 
 float grade_needed_on_final(char *course_name) {
   return 1;
